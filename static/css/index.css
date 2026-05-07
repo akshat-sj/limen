@@ -11,12 +11,13 @@ pre, code, .hljs {
 .publication-title {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
-  letter-spacing: -0.025em;
-  font-size: 2.1rem;
-  line-height: 1.2;
+  letter-spacing: -0.03em;
+  font-size: 1.85rem;
+  line-height: 1.22;
+  max-width: 100%;
 }
 @media (max-width: 768px) {
-  .publication-title { font-size: 1.6rem; }
+  .publication-title { font-size: 1.4rem; }
 }
 
 .publication-authors {
