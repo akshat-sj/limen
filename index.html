@@ -99,6 +99,30 @@
           });
         });
       });
+
+      const copyBtn = document.querySelector('.bibtex-copy');
+      const bibtex  = document.getElementById('bibtex-content');
+      if (copyBtn && bibtex) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(bibtex.textContent.trim());
+            copyBtn.classList.add('is-copied');
+            copyBtn.querySelector('.bibtex-copy-label').textContent = 'Copied';
+            setTimeout(() => {
+              copyBtn.classList.remove('is-copied');
+              copyBtn.querySelector('.bibtex-copy-label').textContent = 'Copy';
+            }, 1800);
+          } catch (err) {
+            const range = document.createRange();
+            range.selectNode(bibtex);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+          }
+        });
+      }
     });
   </script>
 </head>
@@ -176,8 +200,8 @@
       <video controls preload="metadata" playsinline poster="./static/images/envs.png" style="width:100%; display:block;">
         <source src="./static/videos/teaser.mp4" type="video/mp4">
       </video>
-      <h2 class="subtitle has-text-centered" style="margin-top: 1.2rem; font-family: 'Google Sans', sans-serif;">
-        <strong>LIMEN</strong> jointly evolves observations <em>and</em> rewards as executable
+      <h2 class="subtitle has-text-centered" style="margin-top: 1.2rem;">
+        <strong>LIMEN</strong> (<strong>L</strong>earning <strong>I</strong>nterfaces via <strong>M</strong>DP-guided <strong>E</strong>volutio<strong>N</strong>) jointly evolves observations <em>and</em> rewards as executable
         programs. It is the only configuration that avoids catastrophic failure across
         discrete reasoning and continuous control.
       </h2>
@@ -676,7 +700,12 @@ def get_observation(state):
 <section class="section section-alt" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title is-3 has-text-centered">BibTeX</h2>
-<pre><code class="nohighlight">@misc{jaswal2026discoveringreinforcementlearninginterfaces,
+    <div class="bibtex-wrapper">
+      <button class="bibtex-copy" type="button" aria-label="Copy BibTeX">
+        <i class="far fa-copy"></i>
+        <span class="bibtex-copy-label">Copy</span>
+      </button>
+<pre><code class="nohighlight" id="bibtex-content">@misc{jaswal2026discoveringreinforcementlearninginterfaces,
       title={Discovering Reinforcement Learning Interfaces with Large Language Models},
       author={Akshat Singh Jaswal and Ashish Baghel and Paras Chopra},
       year={2026},
@@ -685,6 +714,7 @@ def get_observation(state):
       primaryClass={cs.LG},
       url={https://arxiv.org/abs/2605.03408},
 }</code></pre>
+    </div>
   </div>
 </section>
 
