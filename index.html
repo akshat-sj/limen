@@ -12,14 +12,14 @@
   <!-- Open Graph -->
   <meta property="og:type" content="article">
   <meta property="og:title" content="LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models">
-  <meta property="og:description" content="An LLM-guided evolutionary framework that jointly evolves observations and rewards for RL — the only configuration that avoids catastrophic failure across reasoning and control tasks.">
+  <meta property="og:description" content="An LLM-guided evolutionary framework that jointly evolves observations and rewards for RL. The only configuration that avoids catastrophic failure across reasoning and control tasks.">
   <meta property="og:image" content="https://akshat-sj.github.io/limen/static/images/envs.png">
   <meta property="og:url" content="https://akshat-sj.github.io/limen/">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LIMEN: Discovering RL Interfaces with LLMs">
-  <meta name="twitter:description" content="Joint evolutionary search over observation and reward programs — the only configuration that avoids catastrophic failure across 5 RL tasks.">
+  <meta name="twitter:description" content="Joint evolutionary search over observation and reward programs. The only configuration that avoids catastrophic failure across 5 RL tasks.">
   <meta name="twitter:image" content="https://akshat-sj.github.io/limen/static/images/envs.png">
 
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -71,7 +71,7 @@
 
           <div class="conf-line">
             <img src="./static/images/rlc-logo.svg" alt="RLC">
-            <span>Published at the <a href="https://rl-conference.cc/" target="_blank">Reinforcement Learning Conference</a>, 2026</span>
+            <span>Accepted at the <a href="https://rl-conference.cc/" target="_blank">Reinforcement Learning Conference</a>, 2026</span>
           </div>
 
           <div class="is-size-5 publication-authors">
@@ -131,7 +131,7 @@
       </video>
       <h2 class="subtitle has-text-centered" style="margin-top: 1.2rem; font-family: 'Google Sans', sans-serif;">
         <strong>LIMEN</strong> jointly evolves observations <em>and</em> rewards as executable
-        programs &mdash; the only configuration that avoids catastrophic failure across
+        programs. It is the only configuration that avoids catastrophic failure across
         discrete reasoning and continuous control.
       </h2>
     </div>
@@ -147,7 +147,7 @@
         <div class="tldr-card">
           <h3>TL;DR</h3>
           <ul>
-            <li>Existing LLM-based work (Eureka, Text2Reward, DrEureka) automates only the <em>reward</em>, treating the observation as fixed. We show this is structurally insufficient &mdash; different tasks fail for different reasons.</li>
+            <li>Existing LLM-based work (Eureka, Text2Reward, DrEureka) automates only the <em>reward</em>, treating the observation as fixed. We show this is structurally insufficient: different tasks fail for different reasons.</li>
             <li><strong>LIMEN</strong> is an LLM-guided evolutionary search over executable programs for <em>both</em> observations and rewards, with PPO training as the fitness evaluator.</li>
             <li>Across 5 tasks, <strong>joint evolution is the only configuration</strong> that avoids catastrophic failure on at least one domain.</li>
           </ul>
@@ -244,7 +244,7 @@
         <div class="content has-text-justified" style="margin-top: 1.8rem;">
           <p>
             <strong>Reward-only</strong> (the Eureka-style setup) collapses on Medium and Hard
-            gridworld (19%, 7%) &mdash; the LLM produces well-shaped rewards but the policy still
+            gridworld (19%, 7%). The LLM produces well-shaped rewards but the policy still
             cannot extract relational features from the default 7&times;7 patch.
             <strong>Observation-only</strong> fails completely on Panda (0%) for the symmetric
             reason: the raw state is informationally complete, but binary success provides no
@@ -276,7 +276,7 @@
           <p>
             30 independent samples from the same prompt average <strong>0.8% (Hard)</strong>,
             <strong>2.1% (Medium)</strong>, <strong>10.9% (Panda)</strong>, <strong>21.5% (Go1)</strong>
-            &mdash; versus <strong>76%, 97%, 67%, 55%</strong> with evolution. The LLM's prior is
+            versus <strong>76%, 97%, 67%, 55%</strong> with evolution. The LLM's prior is
             informative but not sufficient; the evaluate-and-refine loop discovers structural
             changes the LLM would not find on its own.
           </p>
@@ -295,7 +295,7 @@
       <div class="column is-four-fifths">
         <div class="content has-text-justified">
           <p>
-            Across tasks the same motifs appear &mdash; the same ones experienced RL practitioners
+            Across tasks the same motifs appear, the same ones experienced RL practitioners
             use by hand. <strong>Observations:</strong> relative geometric features, normalized
             distances, directional indicators, multi-scale encodings, explicit phase indicators,
             predictive features from state derivatives. <strong>Rewards:</strong> potential-based
