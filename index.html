@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models.">
+  <meta name="keywords" content="LIMEN, Reinforcement Learning, LLM, Reward Design, Observation Design, Evolutionary Search">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Discovering Reinforcement Learning Interfaces with Large Language Models</h1>
+          <h3 class="title is-4 conference-authors"><a target="_blank" href="https://rl-conference.cc/">RLC 2026</a></h3>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://github.com/akshat-sj">Akshat Singh Jaswal</a>,
+            </span>
+            <span class="author-block">
+              Ashish Baghel,
+            </span>
+            <span class="author-block">
+              <a href="https://paraschopra.com">Paras Chopra</a>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://lossfunk.com">Lossfunk</a></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2605.03408"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2605.03408"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/Lossfunk/LIMEN"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Reinforcement learning systems rely on environment interfaces that specify observations
+            and reward functions, yet constructing these interfaces for new tasks often requires
+            substantial manual effort. While recent work has automated reward design using large
+            language models (LLMs), these approaches assume fixed observations and do not address
+            the broader challenge of synthesizing complete task interfaces.
+          </p>
+          <p>
+            We study RL task interface discovery from raw simulator state, where both observation
+            mappings and reward functions must be generated. We propose <strong>LIMEN</strong>, an
+            LLM-guided evolutionary framework that produces candidate interfaces as executable
+            programs and iteratively refines them using policy training feedback. Across novel
+            discrete gridworld tasks and continuous control domains spanning locomotion and
+            manipulation, joint evolution of observations and rewards discovers effective
+            interfaces given only a trajectory-level success metric, while optimizing either
+            component alone fails on at least one domain.
+          </p>
+          <p>
+            These results demonstrate that automatic construction of RL interfaces from raw state
+            can substantially reduce manual engineering, and that observation and reward components
+            often benefit from co-design.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            LIMEN frames RL interface discovery as a bilevel optimization problem. The
+            <em>outer loop</em> performs LLM-guided evolutionary search over executable Python
+            programs that define an interface
+            <code>I = (&#966;, R)</code> &mdash; an observation mapping <code>&#966;</code> and a
+            reward function <code>R</code>. The <em>inner loop</em> evaluates each candidate by
+            training a PPO agent from scratch in the induced MDP and measuring the trajectory-level
+            success rate, which serves as the fitness signal.
+          </p>
+          <p>
+            Candidates are stored in a 2D MAP-Elites archive structured by observation
+            dimensionality and reward AST complexity, with island-model parallelism to maintain
+            diversity. Mutation is performed by an LLM (Claude Sonnet 4.6) prompted with the parent
+            program, recent failures, and top archive entries, biasing the search toward robust,
+            structurally novel interfaces.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Key Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate LIMEN on five tasks: three XLand-MiniGrid compositional reasoning
+            tasks (Easy, Medium, Hard) and two MuJoCo continuous control tasks (Go1 push recovery,
+            Panda trajectory tracking). Joint interface discovery consistently outperforms
+            observation-only, reward-only, and sparse baselines &mdash; the only approach that
+            avoids catastrophic failure on every domain.
+          </p>
+        </div>
+
+        <div class="table-container">
+          <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Easy</th>
+                <th>Medium</th>
+                <th>Hard</th>
+                <th>Panda</th>
+                <th>Go1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sparse</td>
+                <td>55%</td><td>9%</td><td>1%</td><td>0%</td><td>7%</td>
+              </tr>
+              <tr>
+                <td>Reward-only</td>
+                <td>90%</td><td>19%</td><td>7%</td><td><strong>70%</strong></td><td>7%</td>
+              </tr>
+              <tr>
+                <td>Obs-only</td>
+                <td>97%</td><td>99%</td><td>33%</td><td>0%</td><td>44%</td>
+              </tr>
+              <tr>
+                <td><strong>LIMEN (joint)</strong></td>
+                <td><strong>99%</strong></td>
+                <td><strong>99%</strong></td>
+                <td><strong>85%</strong></td>
+                <td>45%</td>
+                <td><strong>48%</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="has-text-centered is-size-7">
+          Mean success rate over 10 seeds, evaluated on the best discovered interface retrained from scratch.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Discovered Interface (Example)</h2>
+        <div class="content has-text-justified">
+          <p>
+            Below is a snippet of the observation function evolved by LIMEN for the
+            <em>XLand-MiniGrid Easy</em> task (pick up a blue pyramid in a 9&times;9 grid).
+            The discovered interface combines normalized agent pose, target localization,
+            relative geometric features, directional indicators, and a 7&times;7 egocentric
+            local view &mdash; mirroring the kinds of features RL practitioners hand-engineer.
+          </p>
+        </div>
+        <pre><code class="language-python">def get_observation(state):
+    agent_y = state.agent.position[0] / (H - 1)
+    agent_x = state.agent.position[1] / (W - 1)
+    dir_oh  = jax.nn.one_hot(state.agent.direction, 4)
+
+    # Locate the blue pyramid via a grid mask
+    bp_mask = (grid[:, :, 0] == PYRAMID) &amp; (grid[:, :, 1] == BLUE)
+    bp_y = jnp.sum(yy * bp_mask) / jnp.maximum(count, 1)
+    bp_x = jnp.sum(xx * bp_mask) / jnp.maximum(count, 1)
+
+    rel_y = (bp_y - agent_y_raw) / H
+    rel_x = (bp_x - agent_x_raw) / W
+    dist  = jnp.abs(agent_y - bp_y) + jnp.abs(agent_x - bp_x)
+
+    # Directional indicators + 7x7 egocentric view
+    bp_is_up    = bp_y &lt; agent_y
+    bp_is_down  = bp_y &gt; agent_y
+    bp_is_left  = bp_x &lt; agent_x
+    bp_is_right = bp_x &gt; agent_x
+
+    local_tiles = grid[rows, cols, 0] / 12.0
+    local_colors = grid[rows, cols, 1] / 11.0
+    local_is_bp  = (tiles == PYRAMID) &amp; (colors == BLUE)
+
+    return jnp.concatenate([agent_pos, dir_oh, pocket,
+                            bp_pos, rel_offset, dist,
+                            directional_indicators,
+                            local_tiles, local_colors, local_is_bp])</code></pre>
+        <p class="has-text-centered is-size-7">
+          See the paper appendix for full evolved interfaces across all five tasks.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{jaswal2026limen,
+  author  = {Jaswal, Akshat Singh and Baghel, Ashish and Chopra, Paras},
+  title   = {Discovering Reinforcement Learning Interfaces with Large Language Models},
+  journal = {Reinforcement Learning Conference (RLC)},
+  year    = {2026},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
+            licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
