@@ -65,10 +65,10 @@
       <div class="columns is-centered">
         <div class="column has-text-centered">
 
-          <a href="https://rl-conference.cc/" target="_blank" class="conf-badge">
+          <div class="conf-line">
             <img src="./static/images/rlc-logo.svg" alt="RLC">
-            <span>Accepted at RLC 2026</span>
-          </a>
+            <span>Published at the <a href="https://rl-conference.cc/" target="_blank">Reinforcement Learning Conference</a>, 2026</span>
+          </div>
 
           <h1 class="title is-1 publication-title">
             Discovering Reinforcement Learning Interfaces<br>with Large Language Models
@@ -126,7 +126,7 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <video autoplay muted loop playsinline poster="./static/images/envs.png" style="width:100%; display:block;">
+      <video controls preload="metadata" playsinline poster="./static/images/envs.png" style="width:100%; display:block;">
         <source src="./static/videos/teaser.mp4" type="video/mp4">
       </video>
       <h2 class="subtitle has-text-centered" style="margin-top: 1.2rem; font-family: 'Google Sans', sans-serif;">
@@ -308,16 +308,24 @@
           <ul>
             <li class="is-active"><a>XLand Easy</a></li>
             <li><a>XLand Medium</a></li>
+            <li><a>XLand Hard</a></li>
             <li><a>Go1 Push Recovery</a></li>
             <li><a>Panda Tracking</a></li>
           </ul>
 
+          <!-- ===== EASY ===== -->
           <div class="code-pane is-active">
+            <div class="stats-line"><strong>Task:</strong> Pick up a blue pyramid in a 9×9 grid within 80 steps. &nbsp;·&nbsp; <strong>Success:</strong> 99% &nbsp;·&nbsp; <strong>Obs dim:</strong> 174</div>
+
+            <h4>Observation</h4>
 <pre><code class="language-python">def get_observation(state):
     agent_y = state.agent.position[0] / (H - 1)
     agent_x = state.agent.position[1] / (W - 1)
     dir_oh  = jax.nn.one_hot(state.agent.direction, 4)
+    pocket_tile  = state.agent.pocket[0] / 12.0
+    pocket_color = state.agent.pocket[1] / 11.0
 
+    # Locate blue pyramid via grid mask scan
     bp_mask = (grid[:, :, 0] == PYRAMID) &amp; (grid[:, :, 1] == BLUE)
     bp_y = jnp.sum(yy * bp_mask) / jnp.maximum(count, 1)
     bp_x = jnp.sum(xx * bp_mask) / jnp.maximum(count, 1)
@@ -326,9 +334,13 @@
     rel_x = (bp_x - agent_x_raw) / W
     dist  = jnp.abs(agent_y - bp_y) + jnp.abs(agent_x - bp_x)
 
-    bp_is_up = bp_y &lt; agent_y; bp_is_down  = bp_y &gt; agent_y
-    bp_is_left = bp_x &lt; agent_x; bp_is_right = bp_x &gt; agent_x
+    # Directional indicators
+    bp_is_up    = bp_y &lt; agent_y
+    bp_is_down  = bp_y &gt; agent_y
+    bp_is_left  = bp_x &lt; agent_x
+    bp_is_right = bp_x &gt; agent_x
 
+    # 7×7 egocentric local view
     local_tiles  = grid[rows, cols, 0] / 12.0
     local_colors = grid[rows, cols, 1] / 11.0
     local_is_bp  = (tiles == PYRAMID) &amp; (colors == BLUE)
@@ -336,29 +348,184 @@
     return jnp.concatenate([agent_pos, dir_oh, pocket,
                             bp_pos, rel_offset, dist,
                             directional_indicators,
-                            local_tiles, local_colors, local_is_bp])</code></pre>
-          </div>
+                            local_tiles, local_colors, local_is_bp])  # 174</code></pre>
 
-          <div class="code-pane">
+            <h4>Reward</h4>
 <pre><code class="language-python">def compute_reward(state, action, next_state):
-    just_picked_up = (~was_holding) &amp; now_holding
-    just_succeeded = (~was_success) &amp; now_adjacent
+    just_picked_up = holding_now &amp; (~was_holding)
+    dist_before = abs(agent_y - bp_y) + abs(agent_x - bp_x)
+    dist_after  = abs(next_agent_y - bp_y) + abs(next_agent_x - bp_x)
+    became_adjacent = (dist_after &lt;= 1) &amp; (dist_before &gt; 1)
+    facing_pyramid  = (front_tile == PYRAMID) &amp; (front_color == BLUE)
 
-    reward = ( 10.0 * just_succeeded                  # task success
-             +  2.0 * just_picked_up                  # pickup milestone
-             +  2.0 * delta_to_pyramid * (~holding)   # phase 1: approach
-             +  3.0 * delta_to_square  *  holding     # phase 2: deliver
-             -  1.5 * placed_wrong_spot               # wrong putdown
-             +  3.0 * placed_adjacent                 # correct putdown
-             +  2.0 * just_became_adj_to_square       # adjacency milestone
-             +  0.5 * ready_to_putdown )              # facing valid spot
+    reward = ( 10.0 * just_picked_up                # task completion
+             +  0.5 * (dist_before - dist_after)    # approach shaping
+             +  0.5 * became_adjacent               # adjacency milestone
+             +  1.0 * facing_pyramid                # orientation bonus
+             -  0.005 )                             # step penalty
     return reward</code></pre>
           </div>
 
+          <!-- ===== MEDIUM ===== -->
           <div class="code-pane">
+            <div class="stats-line"><strong>Task:</strong> Place a yellow pyramid adjacent to a green square (9×9, 80 steps). &nbsp;·&nbsp; <strong>Success:</strong> 97% &nbsp;·&nbsp; <strong>Obs dim:</strong> 102</div>
+
+            <h4>Observation</h4>
+<pre><code class="language-python">def get_observation(state):
+    agent_pos = [agent_y / (H - 1), agent_x / (W - 1)]
+    dir_oh    = jax.nn.one_hot(state.agent.direction, 4)
+    holding_yp = (pocket[0] == PYRAMID) &amp; (pocket[1] == YELLOW)
+
+    # Yellow pyramid &amp; green square via mask scan
+    yp_mask = (grid[:, :, 0] == PYRAMID) &amp; (grid[:, :, 1] == YELLOW)
+    gs_mask = (grid[:, :, 0] == SQUARE)  &amp; (grid[:, :, 1] == GREEN)
+
+    # Pairwise spatial relations
+    rel_agent_yp = (yp_pos - agent_pos) / H
+    rel_agent_gs = (gs_pos - agent_pos) / H
+    rel_yp_gs    = (gs_pos - yp_pos)    / H
+    dists        = [dist_agent_yp, dist_agent_gs, dist_yp_gs]
+
+    # Task phase indicators
+    phase_pickup = (~holding_yp) &amp; (~yp_adj_gs)
+    phase_carry  =  holding_yp
+    phase_done   =  yp_adj_gs &amp; (~holding_yp)
+
+    # Best adjacent floor cell to green square
+    for d in range(4):
+        ny = clip(gs_y + DIRECTIONS[d, 0], 0, H - 1)
+        is_floor = (grid[ny, nx, 0] == FLOOR)
+        better   = is_floor &amp; (dist &lt; best_dist)
+        best_adj = jnp.where(better, [ny, nx], best_adj)
+
+    local_grid = grid[agent-2:agent+3, :, :2] / [12, 11]   # 5×5
+
+    return jnp.concatenate([agent_pos, dir_oh, obj_pos,
+                            pairwise_rels, dists, phases,
+                            best_adj, local_grid])  # 102</code></pre>
+
+            <h4>Reward</h4>
 <pre><code class="language-python">def compute_reward(state, action, next_state):
-    up_z      = next_state.info["upvector"][-1]
-    pos_dist  = jnp.linalg.norm(next_state.info["pos_xy"])
+    just_picked_up  = (~was_holding) &amp; now_holding
+    just_succeeded  = (~was_success) &amp; now_adjacent
+
+    reward = ( 10.0 * just_succeeded                # task success
+             +  2.0 * just_picked_up                # pickup milestone
+             +  2.0 * delta_to_pyramid * (~holding) # phase 1: approach
+             +  3.0 * delta_to_square  *  holding   # phase 2: deliver
+             -  1.5 * placed_wrong_spot             # wrong putdown
+             +  3.0 * placed_adjacent               # correct putdown
+             +  2.0 * just_became_adj_to_square     # adjacency milestone
+             +  0.5 * ready_to_putdown )            # facing valid spot
+    return reward</code></pre>
+          </div>
+
+          <!-- ===== HARD ===== -->
+          <div class="code-pane">
+            <div class="stats-line"><strong>Task:</strong> Pick up blue pyramid (becomes green ball), place ball next to yellow hex in 4-room 13×13 (400 steps). &nbsp;·&nbsp; <strong>Success:</strong> 76% &nbsp;·&nbsp; <strong>Obs dim:</strong> 147</div>
+
+            <h4>Observation</h4>
+<pre><code class="language-python">def get_observation(state):
+    agent_pos = [agent_y / (H - 1), agent_x / (W - 1)]
+    dir_oh    = jax.nn.one_hot(state.agent.direction, 4)
+    holding_gb = (pocket[0] == BALL) &amp; (pocket[1] == GREEN)
+
+    # Localize blue pyramid &amp; yellow hex
+    bp_mask = (grid[:, :, 0] == PYRAMID) &amp; (grid[:, :, 1] == BLUE)
+    yh_mask = (grid[:, :, 0] == HEX)     &amp; (grid[:, :, 1] == YELLOW)
+
+    # 4 neighbors of agent: [tile, color, is_pyr, is_hex,
+    #                        is_floor, adj_to_hex] per direction
+    for d in range(4):
+        ...
+
+    # 4 neighbors of hex: [is_floor, rel_y, rel_x,
+    #                      dist_to_agent, at_this_cell]
+    for d in range(4):
+        ...
+
+    # Best placement: closest floor tile adjacent to hex
+    for d in range(4):
+        is_floor = (grid[hex_y + dy, hex_x + dx, 0] == FLOOR)
+        best     = jax.lax.select(is_floor &amp; closer, ...)
+
+    # Phase-dependent navigation target
+    phase  = [searching, holding, placed]
+    target = jax.lax.select(holding &gt; 0.5, hex_pos, pyramid_pos)
+
+    local_grid = grid[agent-2:agent+3, :, :2] / [12, 11]
+
+    return jnp.concatenate([agent_pos, dir_oh, pocket,
+                            bp_loc, hex_loc, neighbors, hex_neighbors,
+                            best_placement, phase, target,
+                            local_grid, ...])  # 147</code></pre>
+
+            <h4>Reward</h4>
+<pre><code class="language-python">def compute_reward(state, action, next_state):
+    just_picked_up = (~was_holding) &amp; now_holding_green_ball
+    ball_placed    = was_holding &amp; (~now_holding)
+    success        = ball_placed &amp; ball_adj_to_hex
+
+    reward = ( 20.0 * success                              # task completion
+             +  5.0 * just_picked_up                       # pickup milestone
+             -  5.0 * (ball_placed &amp; (~ball_adj_to_hex))   # wrong placement
+             +  3.0 * delta_to_pyramid * (~holding)        # phase 1 shaping
+             +  3.0 * delta_to_hex     *  holding          # phase 2 shaping
+             +  1.5 * delta_to_best_placement *  holding   # placement guidance
+             +  3.0 * just_reached_hex_adjacency           # adjacency milestone
+             +  0.5 * ready_to_putdown                     # facing valid spot
+             -  0.01 )                                     # step penalty
+    return reward</code></pre>
+          </div>
+
+          <!-- ===== GO1 ===== -->
+          <div class="code-pane">
+            <div class="stats-line"><strong>Task:</strong> Quadruped survives 500 steps under 150–400 N pushes; mean drift &lt; 10 cm. &nbsp;·&nbsp; <strong>Success:</strong> 55% &nbsp;·&nbsp; <strong>Obs dim:</strong> 98</div>
+
+            <h4>Observation</h4>
+<pre><code class="language-python">DEFAULT_POSE = jnp.array([0.1, 0.9, -1.8, ...])   # ×4 legs
+
+def get_observation(state):
+    gravity = state.info["gravity"]                  # body-frame
+    gyro    = state.info["gyro"] / 5.0
+    lin_vel = state.info["local_linvel"] / 3.0       # body-frame
+
+    # Multi-scale position encoding
+    pos_xy     = state.info["pos_xy"]
+    pos_dist   = jnp.linalg.norm(pos_xy)
+    pos_coarse = pos_xy / 1.0                        # broad gradient
+    pos_fine   = jnp.clip(pos_xy / 0.1, -5, 5)       # sharp at origin
+
+    # Direction to origin in body frame
+    heading   = state.info["heading"]
+    dir_world = -pos_xy / (pos_dist + 1e-6)
+    dir_body  = jnp.array([
+        cos(-heading) * dir_world[0] - sin(-heading) * dir_world[1],
+        sin(-heading) * dir_world[0] + cos(-heading) * dir_world[1]])
+
+    # Stability indicators
+    up_z         = state.info["upvector"][-1]
+    tilt_danger  = jnp.maximum(0.0, 0.7 - up_z)
+
+    # Predictive: linear extrapolation 0.2s ahead
+    future_pos = pos_xy + state.data.qvel[:2] * 0.2
+
+    joint_dev      = (qpos[7:] - DEFAULT_POSE) / pi
+    joint_vel      =  qvel[6:] / 15.0
+    push_force     =  state.info["push_force"] / 400.0
+    push_active    =  jnp.tanh(push_mag / 100.0)
+    actuator_force =  state.data.actuator_force / 50.0
+
+    return jnp.concatenate([gravity, gyro, lin_vel,
+                            pos_coarse, pos_fine, dir_body, tilt_danger,
+                            joint_dev, joint_vel, push_force,
+                            future_pos, ...])  # 98</code></pre>
+
+            <h4>Reward</h4>
+<pre><code class="language-python">def compute_reward(state, action, next_state):
+    up_z     = next_state.info["upvector"][-1]
+    pos_dist = jnp.linalg.norm(next_state.info["pos_xy"])
+    prev_dist = jnp.linalg.norm(state.info["pos_xy"])
 
     # Uprightness (primary survival signal)
     upright    = 4.0 * up_z
@@ -370,23 +537,72 @@
                     + 0.4 * jnp.exp(-5  * pos_dist)
                     + 0.3 * jnp.exp(-20 * pos_dist))
 
+    # Adaptive velocity: toward origin when far, still when near
+    far          = jnp.tanh(pos_dist * 8.0)
+    vel_toward   = jnp.dot(vel_xy, -pos_xy / (pos_dist + 1e-6))
+    vel_reward   = far * jnp.tanh(vel_toward * 3) * 0.6
+
     progress  = 2.0 * jnp.clip((prev_dist - pos_dist) * 40, -1, 1)
     fall_pen  = -20.0 * (up_z &lt; 0.3)
+    survival  = 0.3
 
-    return upright + upright_b + tilt_pen + position + progress + fall_pen + 0.3</code></pre>
+    return (upright + upright_b + tilt_pen + position
+            + progress + vel_reward + fall_pen + survival + ...)</code></pre>
           </div>
 
+          <!-- ===== PANDA ===== -->
           <div class="code-pane">
+            <div class="stats-line"><strong>Task:</strong> Track a 3D Lissajous trajectory for 500 steps with mean error &lt; 2 cm. &nbsp;·&nbsp; <strong>Success:</strong> 67% &nbsp;·&nbsp; <strong>Obs dim:</strong> 94</div>
+
+            <h4>Observation</h4>
+<pre><code class="language-python">def get_observation(state):
+    arm_qpos = state.data.qpos[0:7] / jnp.pi          # normalized
+    arm_qvel = state.data.qvel[0:7] / 2.0
+    gripper  = state.info["gripper_pos"]
+    target   = state.info["target_pos"]
+    error    = target - gripper
+
+    # Multi-scale error normalization
+    error_fine    = error / 0.02                      # 2 cm scale
+    error_med     = error / 0.05                      # 5 cm scale
+    error_coarse  = error / 0.15                      # 15 cm scale
+    dist_feats    = [dist/0.02, dist/0.05, dist/0.15]
+
+    # Target dynamics: analytical derivatives of Lissajous
+    target_vel  = state.info["target_vel"] / 0.15
+    target_acc  = -A * w**2 * sin(w * t + phi) / 0.03
+    target_jerk = -A * w**3 * cos(w * t + phi) / 0.05
+
+    # Trajectory phase encoding (sin / cos per axis)
+    phase_x = [sin(w_x*t + phi_x), cos(w_x*t + phi_x)]
+    phase_y = [sin(w_y*t + phi_y), cos(w_y*t + phi_y)]
+    phase_z = [sin(w_z*t),         cos(w_z*t)]
+
+    # Multi-horizon future tracking errors
+    for dt in [0.04, 0.10, 0.20, 0.40, 0.80, 1.60]:
+        future_target = compute_lissajous(t + dt)
+        future_err    = clip((future_target - gripper) / s, -5, 5)
+
+    ctrl_joint_err  = (prev_ctrl - arm_qpos) / 0.3
+    vel_error_align = jnp.dot(target_vel, error_dir)
+
+    return jnp.concatenate([arm_qpos, arm_qvel,
+                            error_fine, error_med, error_coarse, dist_feats,
+                            target_vel, target_acc, target_jerk,
+                            phase_x, phase_y, phase_z,
+                            future_errs, ...])  # 94</code></pre>
+
+            <h4>Reward</h4>
 <pre><code class="language-python">def compute_reward(state, action, next_state):
     dist = next_state.info["gripper_target_dist"]
 
-    # Multi-scale Gaussian: precise near 2cm threshold
+    # Multi-scale Gaussian: precise near 2 cm threshold
     tight    = jnp.exp(-0.5 * (dist / 0.02) ** 2)
     medium   = jnp.exp(-0.5 * (dist / 0.05) ** 2)
     coarse   = jnp.exp(-0.5 * (dist / 0.15) ** 2)
     tracking = 0.6 * tight + 0.3 * medium + 0.1 * coarse
 
-    # Velocity alignment with target
+    # Velocity alignment: reward moving with target
     error_dir   = error / (jnp.linalg.norm(error) + 1e-6)
     dist_weight = jnp.clip(dist / 0.05, 0, 1)
     vel_bonus   = 0.05 * jnp.dot(error_dir, target_vel_dir) * dist_weight
@@ -399,7 +615,8 @@
         </div>
 
         <p class="fig-caption" style="margin-top: 1rem;">
-          A small slice of the evolved interfaces. Full programs for all five tasks are in the
+          Click each tab to see the evolved (&#966;,&nbsp;R) for that task. Snippets simplified for
+          readability; full programs in the
           <a href="https://arxiv.org/pdf/2605.03408">paper appendix</a>.
         </p>
       </div>
