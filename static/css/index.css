@@ -1,157 +1,221 @@
 body {
   font-family: 'Noto Sans', sans-serif;
+  color: #1f2933;
 }
 
-
-.footer .icon-link {
-    font-size: 25px;
-    color: #000;
+.publication-title {
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.link-block a {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.dnerf {
-  font-variant: small-caps;
-}
-
-
-.teaser .hero-body {
-  padding-top: 0;
-  padding-bottom: 3rem;
-}
-
-.teaser {
+.publication-authors {
   font-family: 'Google Sans', sans-serif;
 }
 
-
-.publication-title {
-}
-
-.publication-banner {
-  max-height: parent;
-
-}
-
-.publication-banner video {
-  position: relative;
-  left: auto;
-  top: auto;
-  transform: none;
-  object-fit: fit;
-}
-
-.publication-header .hero-body {
-}
-
-.publication-title {
-    font-family: 'Google Sans', sans-serif;
-}
-
-.publication-authors {
-    font-family: 'Google Sans', sans-serif;
-}
-
-.publication-venue {
-    color: #555;
-    width: fit-content;
-    font-weight: bold;
-}
-
-.publication-awards {
-    color: #ff3860;
-    width: fit-content;
-    font-weight: bolder;
-}
-
-.publication-authors {
-}
-
 .publication-authors a {
-   color: hsl(204, 86%, 53%) !important;
+  color: hsl(204, 86%, 45%) !important;
 }
 
 .publication-authors a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .author-block {
   display: inline-block;
+  margin: 0 0.25em;
 }
 
-.publication-banner img {
+.affiliation-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.publication-authors {
-  /*color: #4286f4;*/
+.affiliation-row img {
+  height: 38px;
+  object-fit: contain;
 }
 
-.publication-video {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 56.25%;
-
-    overflow: hidden;
-    border-radius: 10px !important;
+/* Conference badge */
+.conf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  background: linear-gradient(135deg, #2c3e50, #4a6278);
+  color: #fff !important;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none !important;
+  margin: 0.6rem 0 0.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.15s ease;
+}
+.conf-badge:hover {
+  transform: translateY(-1px);
+}
+.conf-badge img {
+  height: 18px;
 }
 
-.publication-video iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+/* Buttons */
+.publication-links .button {
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 500;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.publication-links .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.publication-body img {
+.link-block a {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.results-carousel {
-  overflow: hidden;
-}
-
-.results-carousel .item {
-  margin: 5px;
-  overflow: hidden;
-  border: 1px solid #bbb;
-  border-radius: 10px;
-  padding: 0;
-  font-size: 0;
-}
-
-.results-carousel video {
+/* TL;DR card */
+.tldr-card {
+  background: #f8f9fc;
+  border-left: 4px solid hsl(204, 86%, 45%);
+  border-radius: 6px;
+  padding: 1.4rem 1.8rem;
   margin: 0;
 }
-
-
-.interpolation-panel {
-  background: #f5f5f5;
-  border-radius: 10px;
+.tldr-card h3 {
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: hsl(204, 86%, 45%);
+  margin-bottom: 0.8rem;
+}
+.tldr-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.tldr-card li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+.tldr-card li:last-child {
+  margin-bottom: 0;
 }
 
-.interpolation-panel .interpolation-image {
-  width: 100%;
-  border-radius: 5px;
+/* Section dividers */
+.section-alt {
+  background: #f8f9fc;
 }
 
-.interpolation-video-column {
+/* Figure caption */
+.fig-caption {
+  font-size: 0.85rem;
+  color: #5a6776;
+  margin-top: 0.6rem;
+  text-align: center;
+  line-height: 1.5;
 }
 
-.interpolation-panel .slider {
-  margin: 0 !important;
+/* Code tabs */
+.code-tabs {
+  margin-top: 1.5rem;
+}
+.code-tabs ul {
+  border-bottom: 2px solid #e1e4e8;
+  display: flex;
+  gap: 0;
+  list-style: none;
+  margin: 0 0 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+.code-tabs ul li {
+  margin: 0;
+}
+.code-tabs ul li a {
+  display: block;
+  padding: 0.6rem 1.1rem;
+  color: #5a6776;
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none !important;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.code-tabs ul li.is-active a {
+  color: hsl(204, 86%, 45%);
+  border-bottom-color: hsl(204, 86%, 45%);
+}
+.code-tabs ul li a:hover {
+  color: hsl(204, 86%, 45%);
+}
+.code-pane {
+  display: none;
+}
+.code-pane.is-active {
+  display: block;
+}
+.code-pane pre {
+  margin-top: 1rem;
+  border-radius: 6px;
 }
 
-.interpolation-panel .slider {
-  margin: 0 !important;
+/* Hero teaser */
+.teaser .hero-body {
+  padding-top: 0;
+  padding-bottom: 2.5rem;
+}
+.teaser video, .teaser img {
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
 }
 
-#interpolation-image-wrapper {
-  width: 100%;
+/* Section headings */
+section .title.is-3 {
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
-#interpolation-image-wrapper img {
-  border-radius: 5px;
+
+/* BibTeX block */
+#BibTeX pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  border-radius: 6px;
+  padding: 1.2rem;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.footer {
+  background: #f8f9fc;
+  padding: 2rem 1.5rem;
+}
+
+/* Result figure container */
+.result-figure {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* Author email icon */
+.email-icon {
+  font-size: 0.7em;
+  vertical-align: super;
+  margin-left: 0.1em;
+  color: #5a6776 !important;
+}
+.email-icon:hover {
+  color: hsl(204, 86%, 45%) !important;
 }

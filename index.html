@@ -2,13 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models.">
-  <meta name="keywords" content="LIMEN, Reinforcement Learning, LLM, Reward Design, Observation Design, Evolutionary Search">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <meta name="description"
+        content="LIMEN: an LLM-guided evolutionary framework that jointly evolves observation and reward functions for reinforcement learning. Accepted at RLC 2026.">
+  <meta name="keywords" content="LIMEN, Reinforcement Learning, LLM, Reward Design, Observation Design, Evolutionary Search, RLC 2026">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models">
+  <meta property="og:description" content="An LLM-guided evolutionary framework that jointly evolves observations and rewards for RL — the only configuration that avoids catastrophic failure across reasoning and control tasks.">
+  <meta property="og:image" content="https://akshat-sj.github.io/limen/static/images/envs.png">
+  <meta property="og:url" content="https://akshat-sj.github.io/limen/">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LIMEN: Discovering RL Interfaces with LLMs">
+  <meta name="twitter:description" content="Joint evolutionary search over observation and reward programs — the only configuration that avoids catastrophic failure across 5 RL tasks.">
+  <meta name="twitter:image" content="https://akshat-sj.github.io/limen/static/images/envs.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,600,700|Noto+Sans:400,600|Castoro" rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
@@ -16,60 +30,91 @@
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/favicon.svg">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
   <script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/index.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-tabs').forEach(tabs => {
+        const links = tabs.querySelectorAll('ul li');
+        const panes = tabs.querySelectorAll('.code-pane');
+        links.forEach((li, idx) => {
+          li.querySelector('a').addEventListener('click', e => {
+            e.preventDefault();
+            links.forEach(l => l.classList.remove('is-active'));
+            panes.forEach(p => p.classList.remove('is-active'));
+            li.classList.add('is-active');
+            panes[idx].classList.add('is-active');
+          });
+        });
+      });
+    });
+  </script>
 </head>
 <body>
 
 
+<!-- ========== HERO ========== -->
 <section class="hero">
   <div class="hero-body">
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">Discovering Reinforcement Learning Interfaces with Large Language Models</h1>
-          <h3 class="title is-4 conference-authors"><a target="_blank" href="https://rl-conference.cc/">RLC 2026</a></h3>
+
+          <a href="https://rl-conference.cc/" target="_blank" class="conf-badge">
+            <img src="./static/images/rlc-logo.svg" alt="RLC">
+            <span>Accepted at RLC 2026</span>
+          </a>
+
+          <h1 class="title is-1 publication-title">
+            Discovering Reinforcement Learning Interfaces<br>with Large Language Models
+          </h1>
 
           <div class="is-size-5 publication-authors">
             <span class="author-block">
-              <a href="https://github.com/akshat-sj">Akshat Singh Jaswal</a>,
+              <a href="https://github.com/akshat-sj">Akshat Singh Jaswal</a><a class="email-icon" href="mailto:akshat.jaswal@lossfunk.com"><i class="fas fa-envelope"></i></a>,
             </span>
             <span class="author-block">
-              Ashish Baghel,
+              Ashish Baghel<a class="email-icon" href="mailto:ashish.baghel@lossfunk.com"><i class="fas fa-envelope"></i></a>,
             </span>
             <span class="author-block">
-              <a href="https://paraschopra.com">Paras Chopra</a>
+              <a href="https://paraschopra.com">Paras Chopra</a><a class="email-icon" href="mailto:paras@lossfunk.com"><i class="fas fa-envelope"></i></a>
             </span>
           </div>
 
-          <div class="is-size-5 publication-authors">
-            <span class="author-block"><a href="https://lossfunk.com">Lossfunk</a></span>
+          <div class="affiliation-row">
+            <a href="https://lossfunk.com" target="_blank">
+              <img src="./static/images/lossfunk-logo.jpg" alt="Lossfunk">
+            </a>
           </div>
 
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <span class="link-block">
-                <a href="https://arxiv.org/abs/2605.03408" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="https://arxiv.org/pdf/2605.03408" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="https://github.com/Lossfunk/LIMEN" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
-                </a>
-              </span>
-            </div>
+          <div class="publication-links" style="margin-top: 1rem;">
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/2605.03408" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="https://arxiv.org/pdf/2605.03408" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="https://github.com/Lossfunk/LIMEN" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fas fa-quote-left"></i></span><span>BibTeX</span>
+              </a>
+            </span>
           </div>
+
         </div>
       </div>
     </div>
@@ -77,33 +122,43 @@
 </section>
 
 
-<!-- Teaser: 5 environments figure -->
+<!-- ========== TEASER VIDEO ========== -->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <img src="./static/images/envs.png" alt="The five evaluation environments." style="width:100%;">
-      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+      <video autoplay muted loop playsinline poster="./static/images/envs.png" style="width:100%; display:block;">
+        <source src="./static/videos/teaser.mp4" type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered" style="margin-top: 1.2rem; font-family: 'Google Sans', sans-serif;">
         <strong>LIMEN</strong> jointly evolves observations <em>and</em> rewards as executable
-        programs &mdash; the only way to avoid catastrophic failure across discrete reasoning and
-        continuous control.
+        programs &mdash; the only configuration that avoids catastrophic failure across
+        discrete reasoning and continuous control.
       </h2>
     </div>
   </div>
 </section>
 
 
-<!-- Optional teaser video -->
-<section class="hero">
+<!-- ========== TL;DR ========== -->
+<section class="section" style="padding-top: 1rem;">
   <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video id="teaser-video" autoplay muted loop playsinline style="width:100%;">
-        <source src="./static/videos/teaser.mp4" type="video/mp4">
-      </video>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div class="tldr-card">
+          <h3>TL;DR</h3>
+          <ul>
+            <li>Existing LLM-based work (Eureka, Text2Reward, DrEureka) automates only the <em>reward</em>, treating the observation as fixed. We show this is structurally insufficient &mdash; different tasks fail for different reasons.</li>
+            <li><strong>LIMEN</strong> is an LLM-guided evolutionary search over executable programs for <em>both</em> observations and rewards, with PPO training as the fitness evaluator.</li>
+            <li>Across 5 tasks, <strong>joint evolution is the only configuration</strong> that avoids catastrophic failure on at least one domain.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 
+<!-- ========== ABSTRACT ========== -->
 <section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
@@ -111,18 +166,19 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            RL agents are defined by their <em>interface</em> &mdash; what they observe and how
-            they're rewarded. Recent LLM-based work (Eureka, Text2Reward, DrEureka) automates
-            reward design but assumes the observation is fixed. We show this split is structurally
-            insufficient: different tasks fail for different reasons, and which half is the
-            bottleneck isn't always obvious in advance.
+            Reinforcement learning systems rely on environment interfaces that specify observations
+            and reward functions, yet constructing these interfaces for new tasks often requires
+            substantial manual effort. While recent work has automated reward design using large
+            language models (LLMs), these approaches assume fixed observations and do not address
+            the broader challenge of synthesizing complete task interfaces.
           </p>
           <p>
-            <strong>LIMEN</strong> is an LLM-guided evolutionary search over executable programs
-            for <em>both</em> observations and rewards, using PPO training as the fitness
-            evaluator. Across five tasks spanning XLand-MiniGrid reasoning and MuJoCo control,
-            joint evolution is the only configuration that avoids catastrophic failure on at
-            least one domain.
+            We propose <strong>LIMEN</strong>, an LLM-guided evolutionary framework that produces
+            candidate interfaces as executable programs and iteratively refines them using policy
+            training feedback. Across novel discrete gridworld tasks and continuous control domains
+            spanning locomotion and manipulation, joint evolution of observations and rewards
+            discovers effective interfaces given only a trajectory-level success metric, while
+            optimizing either component alone fails on at least one domain.
           </p>
         </div>
       </div>
@@ -131,25 +187,37 @@
 </section>
 
 
-<section class="section">
+<!-- ========== METHOD ========== -->
+<section class="section section-alt">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Method</h2>
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <img src="./static/images/limen-diagram.png" alt="The LIMEN loop." style="width:100%;">
-        <p class="has-text-centered is-size-7" style="margin-top: 0.5rem;">
-          The LIMEN loop. The LLM mutates a parent interface from the MAP-Elites archive,
-          PPO trains and scores the resulting (&#966;,&nbsp;R), and the archive updates with the result.
+        <div class="result-figure">
+          <img src="./static/images/limen-diagram.png" alt="The LIMEN loop." style="width:100%; display:block; background:#fff;">
+        </div>
+        <p class="fig-caption">
+          <strong>The LIMEN loop.</strong> The LLM mutates a parent interface from the MAP-Elites
+          archive, PPO trains and scores the resulting (&#966;,&nbsp;R), and the archive updates
+          with the result.
         </p>
-        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+        <div class="content has-text-justified" style="margin-top: 1.8rem;">
           <p>
-            We frame interface discovery as a bilevel problem. The outer loop searches over
-            (&#966;,&nbsp;R) pairs to maximize a binary trajectory-level success metric; the
-            inner loop is a fixed PPO trainer. Each iteration: sample a parent from a
-            <strong>MAP-Elites archive</strong> (binned by observation dim and reward AST size),
-            mutate via Claude Sonnet 4.6 with feedback from top performers and recent failures,
-            validate, evaluate over 3 seeds, and insert back. 30 iterations per run, 1&ndash;7 GPU
-            hours and $3&ndash;11 in LLM cost on a single L4.
+            We frame interface discovery as a <strong>bilevel problem</strong>. The outer loop
+            searches over (&#966;,&nbsp;R) pairs to maximize a binary trajectory-level success
+            metric; the inner loop is a fixed PPO trainer.
+          </p>
+          <p>Each iteration:</p>
+          <ol>
+            <li>Sample a parent interface from a <strong>MAP-Elites archive</strong> binned by observation dimensionality and reward AST node count.</li>
+            <li>Mutate via Claude Sonnet 4.6, prompted with the parent code, top performers, and traces from recently failed candidates.</li>
+            <li>Validate for syntax and shape correctness.</li>
+            <li>Evaluate. A short-budget cascade filters obvious failures; survivors train over 3 seeds and are scored by mean success rate.</li>
+            <li>Insert back into the archive.</li>
+          </ol>
+          <p>
+            30 iterations per run, one candidate per iteration. Total cost:
+            <strong>1&ndash;7 GPU hours and $3&ndash;11</strong> in LLM calls per task on a single L4.
           </p>
         </div>
       </div>
@@ -158,18 +226,22 @@
 </section>
 
 
+<!-- ========== HEADLINE RESULT ========== -->
 <section class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Headline Result</h2>
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <img src="./static/images/results.png" alt="Success rate across five tasks." style="width:100%;">
-        <p class="has-text-centered is-size-7" style="margin-top: 0.5rem;">
+        <div class="result-figure">
+          <img src="./static/images/results.png" alt="Success rate across five tasks." style="width:100%; display:block; background:#fff;">
+        </div>
+        <p class="fig-caption">
           Success rate across the five tasks, averaged over 10 seeds. Reward-only collapses on
-          the harder gridworld tasks; observation-only collapses on Panda; joint evolution is
-          the only configuration that does not catastrophically fail in any domain.
+          the harder gridworld tasks; observation-only collapses on Panda; <strong>joint
+          evolution is the only configuration that does not catastrophically fail in any
+          domain.</strong>
         </p>
-        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+        <div class="content has-text-justified" style="margin-top: 1.8rem;">
           <p>
             <strong>Reward-only</strong> (the Eureka-style setup) collapses on Medium and Hard
             gridworld (19%, 7%) &mdash; the LLM produces well-shaped rewards but the policy still
@@ -186,23 +258,27 @@
 </section>
 
 
-<section class="section">
+<!-- ========== I.I.D. BASELINE ========== -->
+<section class="section section-alt">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">The Loop Does Real Work</h2>
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <img src="./static/images/iid-baseline.png" alt="i.i.d. samples vs LIMEN." style="width:100%;">
-        <p class="has-text-centered is-size-7" style="margin-top: 0.5rem;">
+        <div class="result-figure">
+          <img src="./static/images/iid-baseline.png" alt="i.i.d. samples vs LIMEN." style="width:100%; display:block; background:#fff;">
+        </div>
+        <p class="fig-caption">
           30 i.i.d. samples from the LLM with no iterative feedback (dots) versus the best
           LIMEN-evolved interface (line). The LLM's prior alone cannot match the
           evaluate-and-refine loop.
         </p>
-        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+        <div class="content has-text-justified" style="margin-top: 1.8rem;">
           <p>
-            30 independent samples from the same prompt average 0.8% (Hard), 2.1% (Medium),
-            10.9% (Panda), 21.5% (Go1) &mdash; versus 76%, 97%, 67%, 55% with evolution. The
-            LLM's prior is informative but not sufficient; the evaluate-and-refine loop discovers
-            structural changes the LLM would not find on its own.
+            30 independent samples from the same prompt average <strong>0.8% (Hard)</strong>,
+            <strong>2.1% (Medium)</strong>, <strong>10.9% (Panda)</strong>, <strong>21.5% (Go1)</strong>
+            &mdash; versus <strong>76%, 97%, 67%, 55%</strong> with evolution. The LLM's prior is
+            informative but not sufficient; the evaluate-and-refine loop discovers structural
+            changes the LLM would not find on its own.
           </p>
         </div>
       </div>
@@ -211,6 +287,7 @@
 </section>
 
 
+<!-- ========== EVOLVED INTERFACES (TABBED) ========== -->
 <section class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">What the LLM Rediscovers</h2>
@@ -226,7 +303,17 @@
             Gaussians on tracking error, smoothness penalties.
           </p>
         </div>
-        <pre><code class="language-python">def get_observation(state):
+
+        <div class="code-tabs">
+          <ul>
+            <li class="is-active"><a>XLand Easy</a></li>
+            <li><a>XLand Medium</a></li>
+            <li><a>Go1 Push Recovery</a></li>
+            <li><a>Panda Tracking</a></li>
+          </ul>
+
+          <div class="code-pane is-active">
+<pre><code class="language-python">def get_observation(state):
     agent_y = state.agent.position[0] / (H - 1)
     agent_x = state.agent.position[1] / (W - 1)
     dir_oh  = jax.nn.one_hot(state.agent.direction, 4)
@@ -239,10 +326,8 @@
     rel_x = (bp_x - agent_x_raw) / W
     dist  = jnp.abs(agent_y - bp_y) + jnp.abs(agent_x - bp_x)
 
-    bp_is_up    = bp_y &lt; agent_y
-    bp_is_down  = bp_y &gt; agent_y
-    bp_is_left  = bp_x &lt; agent_x
-    bp_is_right = bp_x &gt; agent_x
+    bp_is_up = bp_y &lt; agent_y; bp_is_down  = bp_y &gt; agent_y
+    bp_is_left = bp_x &lt; agent_x; bp_is_right = bp_x &gt; agent_x
 
     local_tiles  = grid[rows, cols, 0] / 12.0
     local_colors = grid[rows, cols, 1] / 11.0
@@ -252,8 +337,70 @@
                             bp_pos, rel_offset, dist,
                             directional_indicators,
                             local_tiles, local_colors, local_is_bp])</code></pre>
-        <p class="has-text-centered is-size-7">
-          Evolved observation for XLand-MiniGrid Easy. Full interfaces for all five tasks in the paper appendix.
+          </div>
+
+          <div class="code-pane">
+<pre><code class="language-python">def compute_reward(state, action, next_state):
+    just_picked_up = (~was_holding) &amp; now_holding
+    just_succeeded = (~was_success) &amp; now_adjacent
+
+    reward = ( 10.0 * just_succeeded                  # task success
+             +  2.0 * just_picked_up                  # pickup milestone
+             +  2.0 * delta_to_pyramid * (~holding)   # phase 1: approach
+             +  3.0 * delta_to_square  *  holding     # phase 2: deliver
+             -  1.5 * placed_wrong_spot               # wrong putdown
+             +  3.0 * placed_adjacent                 # correct putdown
+             +  2.0 * just_became_adj_to_square       # adjacency milestone
+             +  0.5 * ready_to_putdown )              # facing valid spot
+    return reward</code></pre>
+          </div>
+
+          <div class="code-pane">
+<pre><code class="language-python">def compute_reward(state, action, next_state):
+    up_z      = next_state.info["upvector"][-1]
+    pos_dist  = jnp.linalg.norm(next_state.info["pos_xy"])
+
+    # Uprightness (primary survival signal)
+    upright    = 4.0 * up_z
+    upright_b  = 10.0 * jnp.maximum(0, up_z - 0.8) ** 2
+    tilt_pen   = -20.0 * jnp.maximum(0, 0.65 - up_z) ** 2
+
+    # Multi-scale position (NOT gated by uprightness)
+    position = 4.0 * (0.3 * jnp.exp(-pos_dist)
+                    + 0.4 * jnp.exp(-5  * pos_dist)
+                    + 0.3 * jnp.exp(-20 * pos_dist))
+
+    progress  = 2.0 * jnp.clip((prev_dist - pos_dist) * 40, -1, 1)
+    fall_pen  = -20.0 * (up_z &lt; 0.3)
+
+    return upright + upright_b + tilt_pen + position + progress + fall_pen + 0.3</code></pre>
+          </div>
+
+          <div class="code-pane">
+<pre><code class="language-python">def compute_reward(state, action, next_state):
+    dist = next_state.info["gripper_target_dist"]
+
+    # Multi-scale Gaussian: precise near 2cm threshold
+    tight    = jnp.exp(-0.5 * (dist / 0.02) ** 2)
+    medium   = jnp.exp(-0.5 * (dist / 0.05) ** 2)
+    coarse   = jnp.exp(-0.5 * (dist / 0.15) ** 2)
+    tracking = 0.6 * tight + 0.3 * medium + 0.1 * coarse
+
+    # Velocity alignment with target
+    error_dir   = error / (jnp.linalg.norm(error) + 1e-6)
+    dist_weight = jnp.clip(dist / 0.05, 0, 1)
+    vel_bonus   = 0.05 * jnp.dot(error_dir, target_vel_dir) * dist_weight
+
+    ctrl_pen = -0.002 * jnp.linalg.norm(ctrl_change)
+    act_pen  = -0.001 * jnp.linalg.norm(action[:7])
+
+    return tracking + vel_bonus + ctrl_pen + act_pen</code></pre>
+          </div>
+        </div>
+
+        <p class="fig-caption" style="margin-top: 1rem;">
+          A small slice of the evolved interfaces. Full programs for all five tasks are in the
+          <a href="https://arxiv.org/pdf/2605.03408">paper appendix</a>.
         </p>
       </div>
     </div>
@@ -261,10 +408,11 @@
 </section>
 
 
-<section class="section" id="BibTeX">
+<!-- ========== BIBTEX ========== -->
+<section class="section section-alt" id="BibTeX">
   <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@misc{jaswal2026discoveringreinforcementlearninginterfaces,
+    <h2 class="title is-3 has-text-centered">BibTeX</h2>
+<pre><code>@misc{jaswal2026discoveringreinforcementlearninginterfaces,
       title={Discovering Reinforcement Learning Interfaces with Large Language Models},
       author={Akshat Singh Jaswal and Ashish Baghel and Paras Chopra},
       year={2026},
@@ -277,20 +425,19 @@
 </section>
 
 
+<!-- ========== FOOTER ========== -->
 <footer class="footer">
   <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content has-text-centered">
-          <p>
-            Contact: <a href="mailto:akshat.jaswal@lossfunk.com">akshat.jaswal@lossfunk.com</a>
-          </p>
-          <p>
-            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
-            licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
-          </p>
-        </div>
-      </div>
+    <div class="content has-text-centered">
+      <p>
+        <a href="mailto:akshat.jaswal@lossfunk.com">akshat.jaswal@lossfunk.com</a> &middot;
+        <a href="mailto:ashish.baghel@lossfunk.com">ashish.baghel@lossfunk.com</a> &middot;
+        <a href="mailto:paras@lossfunk.com">paras@lossfunk.com</a>
+      </p>
+      <p style="font-size: 0.85rem; color: #5a6776;">
+        Template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
+        licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+      </p>
     </div>
   </div>
 </footer>
