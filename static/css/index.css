@@ -1,16 +1,26 @@
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #1f2933;
 }
 
+pre, code, .hljs {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace !important;
+  font-size: 0.85rem;
+}
+
 .publication-title {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  font-size: 2.4rem;
+  line-height: 1.18;
+}
+@media (max-width: 768px) {
+  .publication-title { font-size: 1.8rem; }
 }
 
 .publication-authors {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .publication-authors a {
@@ -37,7 +47,7 @@ body {
 }
 
 .affiliation-row img {
-  height: 38px;
+  height: 48px;
   object-fit: contain;
 }
 
@@ -47,8 +57,8 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0.6em;
-  margin: 0 0 1.2rem;
-  font-family: 'Google Sans', sans-serif;
+  margin: 0.6rem 0 0.4rem;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.95rem;
   color: #4a5568;
   letter-spacing: 0.02em;
@@ -70,7 +80,7 @@ body {
 
 /* Buttons */
 .publication-links .button {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 500;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -93,7 +103,7 @@ body {
   margin: 0;
 }
 .tldr-card h3 {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -147,7 +157,7 @@ body {
   display: block;
   padding: 0.6rem 1.1rem;
   color: #5a6776;
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 500;
   font-size: 0.95rem;
   text-decoration: none !important;
@@ -173,7 +183,7 @@ body {
   border-radius: 6px;
 }
 .code-pane h4 {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -185,7 +195,7 @@ body {
   margin-top: 1rem;
 }
 .code-pane .stats-line {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
   color: #5a6776;
   margin-top: 0.8rem;
@@ -206,7 +216,7 @@ body {
 
 /* Section headings */
 section .title.is-3 {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
   margin-bottom: 1.5rem;
 }
