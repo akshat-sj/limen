@@ -8,13 +8,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LIMEN: Discovering Reinforcement Learning Interfaces with Large Language Models</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/favicon.svg">
 
@@ -56,30 +54,51 @@
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://arxiv.org/abs/2605.03408"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span>
-                  <span>arXiv</span>
+                <a href="https://arxiv.org/abs/2605.03408" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://arxiv.org/pdf/2605.03408"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                  <span>Paper</span>
+                <a href="https://arxiv.org/pdf/2605.03408" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://github.com/Lossfunk/LIMEN"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
+                <a href="https://github.com/Lossfunk/LIMEN" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
                 </a>
               </span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser: 5 environments figure -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/envs.png" alt="The five evaluation environments." style="width:100%;">
+      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+        <strong>LIMEN</strong> jointly evolves observations <em>and</em> rewards as executable
+        programs &mdash; the only way to avoid catastrophic failure across discrete reasoning and
+        continuous control.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<!-- Optional teaser video -->
+<section class="hero">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser-video" autoplay muted loop playsinline style="width:100%;">
+        <source src="./static/videos/teaser.mp4" type="video/mp4">
+      </video>
     </div>
   </div>
 </section>
@@ -92,26 +111,18 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Reinforcement learning systems rely on environment interfaces that specify observations
-            and reward functions, yet constructing these interfaces for new tasks often requires
-            substantial manual effort. While recent work has automated reward design using large
-            language models (LLMs), these approaches assume fixed observations and do not address
-            the broader challenge of synthesizing complete task interfaces.
+            RL agents are defined by their <em>interface</em> &mdash; what they observe and how
+            they're rewarded. Recent LLM-based work (Eureka, Text2Reward, DrEureka) automates
+            reward design but assumes the observation is fixed. We show this split is structurally
+            insufficient: different tasks fail for different reasons, and which half is the
+            bottleneck isn't always obvious in advance.
           </p>
           <p>
-            We study RL task interface discovery from raw simulator state, where both observation
-            mappings and reward functions must be generated. We propose <strong>LIMEN</strong>, an
-            LLM-guided evolutionary framework that produces candidate interfaces as executable
-            programs and iteratively refines them using policy training feedback. Across novel
-            discrete gridworld tasks and continuous control domains spanning locomotion and
-            manipulation, joint evolution of observations and rewards discovers effective
-            interfaces given only a trajectory-level success metric, while optimizing either
-            component alone fails on at least one domain.
-          </p>
-          <p>
-            These results demonstrate that automatic construction of RL interfaces from raw state
-            can substantially reduce manual engineering, and that observation and reward components
-            often benefit from co-design.
+            <strong>LIMEN</strong> is an LLM-guided evolutionary search over executable programs
+            for <em>both</em> observations and rewards, using PPO training as the fitness
+            evaluator. Across five tasks spanning XLand-MiniGrid reasoning and MuJoCo control,
+            joint evolution is the only configuration that avoids catastrophic failure on at
+            least one domain.
           </p>
         </div>
       </div>
@@ -122,87 +133,25 @@
 
 <section class="section">
   <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
     <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Method</h2>
-        <div class="content has-text-justified">
-          <p>
-            LIMEN frames RL interface discovery as a bilevel optimization problem. The
-            <em>outer loop</em> performs LLM-guided evolutionary search over executable Python
-            programs that define an interface
-            <code>I = (&#966;, R)</code> &mdash; an observation mapping <code>&#966;</code> and a
-            reward function <code>R</code>. The <em>inner loop</em> evaluates each candidate by
-            training a PPO agent from scratch in the induced MDP and measuring the trajectory-level
-            success rate, which serves as the fitness signal.
-          </p>
-          <p>
-            Candidates are stored in a 2D MAP-Elites archive structured by observation
-            dimensionality and reward AST complexity, with island-model parallelism to maintain
-            diversity. Mutation is performed by an LLM (Claude Sonnet 4.6) prompted with the parent
-            program, recent failures, and top archive entries, biasing the search toward robust,
-            structurally novel interfaces.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Key Results</h2>
-        <div class="content has-text-justified">
-          <p>
-            We evaluate LIMEN on five tasks: three XLand-MiniGrid compositional reasoning
-            tasks (Easy, Medium, Hard) and two MuJoCo continuous control tasks (Go1 push recovery,
-            Panda trajectory tracking). Joint interface discovery consistently outperforms
-            observation-only, reward-only, and sparse baselines &mdash; the only approach that
-            avoids catastrophic failure on every domain.
-          </p>
-        </div>
-
-        <div class="table-container">
-          <table class="table is-striped is-hoverable is-fullwidth">
-            <thead>
-              <tr>
-                <th>Method</th>
-                <th>Easy</th>
-                <th>Medium</th>
-                <th>Hard</th>
-                <th>Panda</th>
-                <th>Go1</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Sparse</td>
-                <td>55%</td><td>9%</td><td>1%</td><td>0%</td><td>7%</td>
-              </tr>
-              <tr>
-                <td>Reward-only</td>
-                <td>90%</td><td>19%</td><td>7%</td><td><strong>70%</strong></td><td>7%</td>
-              </tr>
-              <tr>
-                <td>Obs-only</td>
-                <td>97%</td><td>99%</td><td>33%</td><td>0%</td><td>44%</td>
-              </tr>
-              <tr>
-                <td><strong>LIMEN (joint)</strong></td>
-                <td><strong>99%</strong></td>
-                <td><strong>99%</strong></td>
-                <td><strong>85%</strong></td>
-                <td>45%</td>
-                <td><strong>48%</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="has-text-centered is-size-7">
-          Mean success rate over 10 seeds, evaluated on the best discovered interface retrained from scratch.
+      <div class="column is-four-fifths">
+        <img src="./static/images/limen-diagram.png" alt="The LIMEN loop." style="width:100%;">
+        <p class="has-text-centered is-size-7" style="margin-top: 0.5rem;">
+          The LIMEN loop. The LLM mutates a parent interface from the MAP-Elites archive,
+          PPO trains and scores the resulting (&#966;,&nbsp;R), and the archive updates with the result.
         </p>
+        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+          <p>
+            We frame interface discovery as a bilevel problem. The outer loop searches over
+            (&#966;,&nbsp;R) pairs to maximize a binary trajectory-level success metric; the
+            inner loop is a fixed PPO trainer. Each iteration: sample a parent from a
+            <strong>MAP-Elites archive</strong> (binned by observation dim and reward AST size),
+            mutate via Claude Sonnet 4.6 with feedback from top performers and recent failures,
+            validate, evaluate over 3 seeds, and insert back. 30 iterations per run, 1&ndash;7 GPU
+            hours and $3&ndash;11 in LLM cost on a single L4.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -211,16 +160,70 @@
 
 <section class="section">
   <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Headline Result</h2>
     <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Discovered Interface (Example)</h2>
+      <div class="column is-four-fifths">
+        <img src="./static/images/results.png" alt="Success rate across five tasks." style="width:100%;">
+        <p class="has-text-centered is-size-7" style="margin-top: 0.5rem;">
+          Success rate across the five tasks, averaged over 10 seeds. Reward-only collapses on
+          the harder gridworld tasks; observation-only collapses on Panda; joint evolution is
+          the only configuration that does not catastrophically fail in any domain.
+        </p>
+        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+          <p>
+            <strong>Reward-only</strong> (the Eureka-style setup) collapses on Medium and Hard
+            gridworld (19%, 7%) &mdash; the LLM produces well-shaped rewards but the policy still
+            cannot extract relational features from the default 7&times;7 patch.
+            <strong>Observation-only</strong> fails completely on Panda (0%) for the symmetric
+            reason: the raw state is informationally complete, but binary success provides no
+            gradient. <strong>Joint evolution</strong> is the only configuration with non-trivial
+            performance across all five tasks (99%, 99%, 85%, 45%, 48%).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">The Loop Does Real Work</h2>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <img src="./static/images/iid-baseline.png" alt="i.i.d. samples vs LIMEN." style="width:100%;">
+        <p class="has-text-centered is-size-7" style="margin-top: 0.5rem;">
+          30 i.i.d. samples from the LLM with no iterative feedback (dots) versus the best
+          LIMEN-evolved interface (line). The LLM's prior alone cannot match the
+          evaluate-and-refine loop.
+        </p>
+        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+          <p>
+            30 independent samples from the same prompt average 0.8% (Hard), 2.1% (Medium),
+            10.9% (Panda), 21.5% (Go1) &mdash; versus 76%, 97%, 67%, 55% with evolution. The
+            LLM's prior is informative but not sufficient; the evaluate-and-refine loop discovers
+            structural changes the LLM would not find on its own.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">What the LLM Rediscovers</h2>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
         <div class="content has-text-justified">
           <p>
-            Below is a snippet of the observation function evolved by LIMEN for the
-            <em>XLand-MiniGrid Easy</em> task (pick up a blue pyramid in a 9&times;9 grid).
-            The discovered interface combines normalized agent pose, target localization,
-            relative geometric features, directional indicators, and a 7&times;7 egocentric
-            local view &mdash; mirroring the kinds of features RL practitioners hand-engineer.
+            Across tasks the same motifs appear &mdash; the same ones experienced RL practitioners
+            use by hand. <strong>Observations:</strong> relative geometric features, normalized
+            distances, directional indicators, multi-scale encodings, explicit phase indicators,
+            predictive features from state derivatives. <strong>Rewards:</strong> potential-based
+            shaping via distance deltas, milestone bonuses for phase transitions, multi-scale
+            Gaussians on tracking error, smoothness penalties.
           </p>
         </div>
         <pre><code class="language-python">def get_observation(state):
@@ -228,7 +231,6 @@
     agent_x = state.agent.position[1] / (W - 1)
     dir_oh  = jax.nn.one_hot(state.agent.direction, 4)
 
-    # Locate the blue pyramid via a grid mask
     bp_mask = (grid[:, :, 0] == PYRAMID) &amp; (grid[:, :, 1] == BLUE)
     bp_y = jnp.sum(yy * bp_mask) / jnp.maximum(count, 1)
     bp_x = jnp.sum(xx * bp_mask) / jnp.maximum(count, 1)
@@ -237,13 +239,12 @@
     rel_x = (bp_x - agent_x_raw) / W
     dist  = jnp.abs(agent_y - bp_y) + jnp.abs(agent_x - bp_x)
 
-    # Directional indicators + 7x7 egocentric view
     bp_is_up    = bp_y &lt; agent_y
     bp_is_down  = bp_y &gt; agent_y
     bp_is_left  = bp_x &lt; agent_x
     bp_is_right = bp_x &gt; agent_x
 
-    local_tiles = grid[rows, cols, 0] / 12.0
+    local_tiles  = grid[rows, cols, 0] / 12.0
     local_colors = grid[rows, cols, 1] / 11.0
     local_is_bp  = (tiles == PYRAMID) &amp; (colors == BLUE)
 
@@ -252,7 +253,7 @@
                             directional_indicators,
                             local_tiles, local_colors, local_is_bp])</code></pre>
         <p class="has-text-centered is-size-7">
-          See the paper appendix for full evolved interfaces across all five tasks.
+          Evolved observation for XLand-MiniGrid Easy. Full interfaces for all five tasks in the paper appendix.
         </p>
       </div>
     </div>
@@ -263,11 +264,14 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code>@article{jaswal2026limen,
-  author  = {Jaswal, Akshat Singh and Baghel, Ashish and Chopra, Paras},
-  title   = {Discovering Reinforcement Learning Interfaces with Large Language Models},
-  journal = {Reinforcement Learning Conference (RLC)},
-  year    = {2026},
+    <pre><code>@misc{jaswal2026discoveringreinforcementlearninginterfaces,
+      title={Discovering Reinforcement Learning Interfaces with Large Language Models},
+      author={Akshat Singh Jaswal and Ashish Baghel and Paras Chopra},
+      year={2026},
+      eprint={2605.03408},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2605.03408},
 }</code></pre>
   </div>
 </section>
@@ -278,6 +282,9 @@
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content has-text-centered">
+          <p>
+            Contact: <a href="mailto:akshat.jaswal@lossfunk.com">akshat.jaswal@lossfunk.com</a>
+          </p>
           <p>
             Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
             licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
