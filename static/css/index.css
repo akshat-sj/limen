@@ -309,10 +309,12 @@ section .title.is-3 {
 
 /* Author email icon */
 .email-icon {
-  font-size: 0.7em;
-  vertical-align: super;
-  margin-left: 0.1em;
+  font-size: 0.85em;
+  vertical-align: baseline;
+  margin-left: 0.25em;
   color: #5a6776 !important;
+  position: relative;
+  top: -1px;
 }
 .email-icon:hover {
   color: hsl(204, 86%, 45%) !important;
